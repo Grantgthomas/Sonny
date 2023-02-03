@@ -1,8 +1,12 @@
 import argparse
 import csv
 import string
+import os
+import time
 import random
-from lib2to3.pgen2.driver import Driver
+from iden import * 
+from create_dynamics import *
+from interpret_questions import *
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
@@ -10,7 +14,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from random_word import RandomWords
+
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -54,9 +58,10 @@ def workdayAuth(driver,sites):
         #frame = driver.find_element(By.ID,value='__gwt_historyFrame')
         #driver.switch_to.frame(frame)
         try:
-            accButton = WebDriverWait(driver,10).until(
-                EC.presence_of_element_located((By.CLASS_NAME,'css-14pfav7'))
-            )
+            #accButton = WebDriverWait(driver,15).until(
+            #    EC.presence_of_element_located((By.CLASS_NAME,'css-14pfav7'))
+            #)
+            accButton = idenAutoID(driver,"createAccountLink")
             accButton.click()
             emailForm = WebDriverWait(driver, 10).until(
             #emailForm = driver.find_element(By.ID,value='input-4')
@@ -84,13 +89,19 @@ def workdayAuth(driver,sites):
                 createAccountCheckbox.click()
             except:
                 print("No Create Checkbox")
-
-            submitButton = driver.find_element(By.XPATH,"//*[@data-automation-id='click_filter']")
-            submitButton.click()
-            submitButton.click()
+            try:
+                submitButton = WebDriverWait(driver, 3).until(
+                EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='click_filter']"))
+                )
+                #submitButton = driver.find_element(By.XPATH,"//*[@data-automation-id='click_filter']")
+                submitButton.click()
+                submitButton.click()
+            except:
+                pass
+        except:
+            print('Account Creation Fail')
         finally:
            print('AccountCreated')
-
 
 
 
@@ -105,7 +116,22 @@ def selectListItem(list,item,page,driver):
             listItemSet = True
         phoneLine = driver.find_element(By.XPATH, page)
         phoneLine.click()
-        
+
+
+def checkStillExists(driver):
+        try:
+            if( WebDriverWait(driver,3).until(   EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='notFoundPage']")))):
+                driver.quit()
+                print("Page not found")
+        except:
+            pass
+
+
+
+
+def clickRadio(driver,opt):
+        RadioOpt =driver.find_element(By.XPATH,"//*[@id="+opt+"]")
+        RadioOpt.send_keys(Keys.SPACE)
 
 def fillMyInfo(driver):
     usrAddress = "132 North Mulberry St."
@@ -114,21 +140,39 @@ def fillMyInfo(driver):
     usrPhone = "7378084776"
     usrFname = "G"
     usrLname = "T"
+    usrState = "Washington"
+    usrCounty = "Seattle"
     try:
         searchBox = WebDriverWait(driver,10).until(
-            EC.presence_of_element_located((By.XPATH,"//*[@id='input-1']"))
+            EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='sourceDropdown']"))
         )
         searchBox.click()
-        WebDriverWait(driver,3).until(
-            EC.presence_of_element_located((By.XPATH,"//*[@data-automation-label='Social Media']"))
-        )
-        searchBox = driver.find_element(By.XPATH, "//*[@data-automation-label='Social Media']")
-        searchBox.click()
-        WebDriverWait(driver,3).until(
-            EC.presence_of_element_located((By.XPATH,"//*[@data-automation-label='Twitter']"))
-        )
-        searchBox = driver.find_element(By.XPATH, "//*[@data-automation-label='Twitter']")
-        searchBox.click()
+        try:
+            WebDriverWait(driver,3).until(
+                EC.presence_of_element_located((By.XPATH,"//*[@data-automation-label='Social Media']"))
+            )
+            searchBox = driver.find_element(By.XPATH, "//*[@data-automation-label='Social Media']")
+            searchBox.click()
+            WebDriverWait(driver,3).until(
+                EC.presence_of_element_located((By.XPATH,"//*[@data-automation-label='Twitter']"))
+            )
+            searchBox = driver.find_element(By.XPATH, "//*[@data-automation-label='Twitter']")
+            searchBox.click()
+        except:
+            searchBox.send_keys("T")
+            searchBox.send_keys(Keys.ENTER)
+        previousWorker = idenAutoID(driver,"previousWorker")
+
+        #press button for if you were a previous employee
+        if previousWorker != None:
+            print("attempting click")
+            clickRadio(driver,"2")
+            #WebDriverWait(driver,3).until(EC.invisibility_of_element_located((By.XPATH,"//div[@class='blockUI blockOverlay']")))
+            #invis = idenAutoID(driver,"//*[@class='css-1utp272']")
+            #invis.click()
+            #notPrevious = driver.find_element(By.XPATH, "//*[@class='css-1utp272']")
+            #notPrevious.click()
+        
         addressLine = driver.find_element(By.XPATH, "//*[@data-automation-id='addressSection_addressLine1']")
         cityLine = driver.find_element(By.XPATH, "//*[@data-automation-id='addressSection_city']")
         postalLine = driver.find_element(By.XPATH, "//*[@data-automation-id='addressSection_postalCode']")
@@ -136,17 +180,28 @@ def fillMyInfo(driver):
         lnameLine = driver.find_element(By.XPATH, "//*[@data-automation-id='legalNameSection_lastName']")
         phoneType = driver.find_element(By.XPATH, "//*[@data-automation-id='phone-device-type']")
         phoneNumber = driver.find_element(By.XPATH, "//*[@data-automation-id='phone-number']")
+        county = driver.find_element(By.XPATH, "//*[@data-automation-id='addressSection_regionSubdivision1']")
         addressLine.send_keys(usrAddress)
         cityLine.send_keys(usrCity)
         postalLine.send_keys(usrPostal)
         phoneNumber.send_keys(usrPhone)
         fnameLine.send_keys(usrFname)
-        lnameLine.send_keys(usrLname)      
-        phoneType.send_keys('Mobile')
-        phoneType.click()
+        lnameLine.send_keys(usrLname)
+        county.send_keys(usrCounty)
+        setUsrState(driver,"addressSection_countryRegion",usrState)      
+        phoneType.send_keys('m')
+        phoneType.send_keys(Keys.ENTER)
 
         #selectListItem("//*[@data-automation-id='phone-device-type']","//*[text()='Mobile']","//*[@data-automation-id='contactInformationPage']",driver)
         #selectListItem("//*[@data-automation-id='addressSection_countryRegion']","//*[text()='Washington']","//*[@data-automation-id='contactInformationPage']",driver)
+    except:
+        searchBox =idenID(driver,"input-1")
+        searchBox.click()
+        try:
+            searchBox =idenAutoID(driver,"sourceDropdown")
+            searchBox.click()
+        except:
+            pass
     finally:
         submitButton(driver)
         print('myinfo filled')
@@ -161,40 +216,16 @@ def fillMyExperience(driver):
     finally:
         submitButton(driver)
 
-def createWorkExp(driver,workExpData):
-    fromDate = workExpData.fromDate
-    toDate = workExpData.toDate
-    usrJobTitle = workExpData.jobTitle
-    usrCompany = workExpData.company
-    usrLocation = workExpData.location
-    currentJob = workExpData.currentJob
-    usrDescription = workExpData.jobDescription
-    #find the button for work exp
+def setUsrState(driver,ElementID,newAria):
+    element = idenAutoID(driver,ElementID)
+    element.get_attribute("aria-label")
+    #element.click()
+    #driver.execute_script("arguments[0].setAttribute('aria-label', 'State {} Required'); arguments[0].innerHTML = '{}';".format(newAria,newAria), element)
+    #direcctInput = driver.find_element(By.XPATH,"/html/body/div[5]/div/div/div/div/div[3]/div[2]/div[7]/div[3]/div/div/div/input")
+    element.send_keys(newAria)
+    element.send_keys(Keys.ENTER)
+    element.send_keys(Keys.ENTER)
 
-    try:
-        addWorkButton = driver.find_element(By.XPATH, "//*[@aria-label='Add Work Experience']")
-    except:
-        addWorkButton = driver.find_element(By.XPATH, "//*[@aria-label='Add Another Work Experience']")
-
-    addWorkButton.click()
-    jobTitleInput = driver.find_elements(By.XPATH, "//*[@data-automation-id='jobTitle']")
-    companyInput = driver.find_elements(By.XPATH, "//*[@data-automation-id='company']")
-    locationTitleInput = driver.find_elements(By.XPATH, "//*[@data-automation-id='location']")
-    descriptionInput = driver.find_elements(By.XPATH, "//*[@data-automation-id='description']")
-    
-    #find the last two date range boxes
-    WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='dateSectionMonth-input']")))
-    dateBoxes = driver.find_elements(By.XPATH,"//*[@data-automation-id='dateSectionMonth-input']")
-    dateBoxes[len(dateBoxes)-2].send_keys(fromDate)
-    dateBoxes[len(dateBoxes)-1].send_keys(toDate)
-    if(currentJob):
-        currentJobBox = driver.find_element(By.XPATH,"//*[@data-automation-id='currentlyWorkHere']")
-        currentJobBox.click()
-    jobTitleInput[len(jobTitleInput)-1].send_keys(usrJobTitle)
-    companyInput[len(companyInput)-1].send_keys(usrCompany)
-    locationTitleInput[len(locationTitleInput)-1].send_keys(usrLocation)
-    descriptionInput[len(descriptionInput)-1].send_keys(usrDescription)
-    driver.execute_script("arguments[0].scrollIntoView();", descriptionInput[len(descriptionInput)-1])
 
 
 
@@ -208,6 +239,30 @@ class workExpData:
         self.jobDescription = jobDescription
         self.currentJob = currentJob
 
+def appQuestions(driver):
+    questionElements = idenAppQuestions(driver)
+    #button_ids = [button.get_attribute("id") for button in questionElements]
+    #button_arias = [button.get_attribute("aria-label") for button in questionElements]
+    #element_arias = [ for button in questionElements]
+    answers = getAnswers()
+    for element in questionElements:
+        element_aria = element.get_attribute("aria-label")
+        element_question = checkQuestions(element_aria)
+        try:
+            if answers[element_question]=="n":
+                answerDropdown(element,"n")
+            elif answers[element_question]=="y":
+                answerDropdown(element,"y")
+        except:
+            #answer is not within question dict so guess
+            answerDropdown(element,"b")
+            answerDropdown(element,"y")
+
+        #answerDropdown(element,True)
+
+    
+        
+  
 
 def addExperience(driver,currentJob):
     actions = ActionChains(driver)
@@ -226,7 +281,9 @@ def addExperience(driver,currentJob):
     #create a function to fill out skills
 
     #Create a function to upload resume
-
+    file_input = idenAutoID(driver,"file-upload-input-ref")
+    file = os.getcwd()+"\\functionalsample.pdf"
+    file_input.send_keys(file)
     #create a function to add websites
 
     #actions.move_to_element(addWorkButton).perform()
@@ -237,18 +294,18 @@ def addExperience(driver,currentJob):
     #Get the xpath for each elment in the dynamically gnerated boxes
     #fillDateRange(driver)
 
-    if currentJob:
-        print("current")
-        currentJob = driver.find_element(By.XPATH, "//*[@data-automation-id='currentlyWorkHere']")
-        currentJob.click()
-    titleBox = driver.find_element(By.XPATH, "//*[@data-automation-id='jobTitle']")
-    titleBox.send_keys(usrJobTitle)
-    companyBox = driver.find_element(By.XPATH, "//*[@data-automation-id='company']")
-    companyBox.send_keys(usrCompany)
-    locationBox = driver.find_element(By.XPATH, "//*[@data-automation-id='location']")
-    locationBox.send_keys(usrLocation)
-    descriptionBox = driver.find_element(By.XPATH, "//*[@data-automation-id='location']")
-    descriptionBox.send_keys(usrDescription)
+    #if currentJob:
+    #    print("current")
+    #    currentJob = driver.find_element(By.XPATH, "//*[@data-automation-id='currentlyWorkHere']")
+    #    currentJob.click()
+   # titleBox = driver.find_element(By.XPATH, "//*[@data-automation-id='jobTitle']")
+    #titleBox.send_keys(usrJobTitle)
+    #companyBox = driver.find_element(By.XPATH, "//*[@data-automation-id='company']")
+    #companyBox.send_keys(usrCompany)
+    #locationBox = driver.find_element(By.XPATH, "//*[@data-automation-id='location']")
+    #locationBox.send_keys(usrLocation)
+    #descriptionBox = driver.find_element(By.XPATH, "//*[@data-automation-id='location']")
+    #descriptionBox.send_keys(usrDescription)
 
 
 
@@ -278,11 +335,18 @@ def main():
     options = Options()
     options.add_argument('--disable-blink-features=AutomationControlled')
     driver = webdriver.Firefox(service=service,options=options)
-    
     workdayAuth(driver,sites)
     #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
+    time.sleep(3.2)
+    checkStillExists(driver)
+    applyManually = idenAutoID(driver,"applyManually")
+    if applyManually != None:
+        applyManually.click()
+    else:
+        print("Button not there")
     fillMyInfo(driver)
     fillMyExperience(driver)
+    appQuestions(driver)
 
 
 if __name__ == "__main__":
