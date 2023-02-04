@@ -259,6 +259,8 @@ def appQuestions(driver):
             answerDropdown(element,"y")
 
         #answerDropdown(element,True)
+    submitButton(driver)
+    
 
     
         
