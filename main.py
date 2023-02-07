@@ -45,19 +45,18 @@ def submitButton(driver):
 def random_word(length):
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
 
-def workdayAuth(driver,sites):
+def workdayAuth(driver):
     #random_words = RandomWords()
-    usrEmail = '@gmail.com'
+    usrEmail = 'a@gmail.com'
     #for testing only
     
     emailSeed = random_word(10)
     usrEmail = emailSeed + usrEmail
     usrPass = 'Passsssssss123!'
-    for address in sites:
-        driver.get(address[0])
+ 
         #frame = driver.find_element(By.ID,value='__gwt_historyFrame')
         #driver.switch_to.frame(frame)
-        try:
+    try:
             #accButton = WebDriverWait(driver,15).until(
             #    EC.presence_of_element_located((By.CLASS_NAME,'css-14pfav7'))
             #)
@@ -98,9 +97,9 @@ def workdayAuth(driver,sites):
                 submitButton.click()
             except:
                 pass
-        except:
+    except:
             print('Account Creation Fail')
-        finally:
+    finally:
            print('AccountCreated')
 
 
@@ -240,12 +239,15 @@ class workExpData:
         self.currentJob = currentJob
 
 def appQuestions(driver):
+    time.sleep(1.5)
     questionElements = idenAppQuestions(driver)
     #button_ids = [button.get_attribute("id") for button in questionElements]
     #button_arias = [button.get_attribute("aria-label") for button in questionElements]
     #element_arias = [ for button in questionElements]
     answers = getAnswers()
+    
     for element in questionElements:
+        time.sleep(.5)
         element_aria = element.get_attribute("aria-label")
         element_question = checkQuestions(element_aria)
         try:
@@ -259,6 +261,7 @@ def appQuestions(driver):
             answerDropdown(element,"y")
 
         #answerDropdown(element,True)
+        driver.execute_script("arguments[0].scrollIntoView();", element)
     submitButton(driver)
     
 
@@ -320,7 +323,27 @@ def fillDateRange(driver):
     fromDateBox.send_keys(Keys.TAB)
     fromDateBox.send_keys("42007")
 
-    
+def fillEEO(driver):
+    checkBoxes = idenCheckBoxes
+    answerCheckbox(checkBoxes)
+    submitButton(driver)
+
+
+def engineInit(site):
+    service = FirefoxService(executable_path=GeckoDriverManager().install())
+    options = Options()
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    driver = webdriver.Firefox(service=service,options=options)
+    driver.get(site)
+    return driver
+
+
+def importSites(args):
+        #get directory of file for site names
+    siteFile = args.a
+    sites = []
+    sites = readFile(siteFile)
+    return sites
 
 def main():
     #define arguments to run
@@ -328,27 +351,27 @@ def main():
     parser.add_argument('-a',type=str,required=True,help='provides input for addresses')
     args = parser.parse_args()
 
-    #get directory of file for site names
-    siteFile = args.a
-    sites = []
-    sites = readFile(siteFile)
+    sites = importSites(args)
 
-    service = FirefoxService(executable_path=GeckoDriverManager().install())
-    options = Options()
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    driver = webdriver.Firefox(service=service,options=options)
-    workdayAuth(driver,sites)
-    #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
-    time.sleep(3.2)
-    checkStillExists(driver)
-    applyManually = idenAutoID(driver,"applyManually")
-    if applyManually != None:
-        applyManually.click()
-    else:
-        print("Button not there")
-    fillMyInfo(driver)
-    fillMyExperience(driver)
-    appQuestions(driver)
+    for site in sites:
+        driver = engineInit(site)
+        #get directory of file for site names
+        workdayAuth(driver,importSites())
+        #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
+        time.sleep(3.2)
+        checkStillExists(driver)
+        applyManually = idenAutoID(driver,"applyManually")
+        if applyManually != None:
+            applyManually.click()
+        else:
+            print("Button not there")
+        fillMyInfo(driver)
+        fillMyExperience(driver)
+        appQuestions(driver)
+        appQuestions(driver)
+        fillEEO(driver)
+
+    
 
 
 if __name__ == "__main__":

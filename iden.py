@@ -10,6 +10,10 @@ def idenAppQuestions(driver):
     #button_arias = [button.get_attribute("aria-label") for button in button_elements]
     return button_elements
 
+def idenCheckBoxes(driver):
+    box_elements = driver.find_elements(By.XPATH,"//*[@type='{}']".format("checkbox"))
+    return box_elements 
+
 def idenAutoID(driver,ID):
     try:
         if (WebDriverWait(driver,6).until(EC.presence_of_element_located((By.XPATH, "//*[@data-automation-id='"+ID+"']")))):
@@ -27,4 +31,13 @@ def idenID(driver,ID):
     except:
         print("Element not found ID"+ID)
         pass
-            
+
+def idenQuestion(aria_string,possible_question):
+    words_list = aria_string.split()
+    word_index = 0
+    for word in words_list:
+        if word.lower() == possible_question[word_index]:
+            word_index += 1
+            if word_index == len(possible_question):
+                return True
+    return False
