@@ -10,7 +10,7 @@ The flags for using Sonny are displayed bellow:
   
 Here is an example use of Sonny:
 
-  Python3 main.py -r myData.json -a sites.csv
+    Python3 main.py -r myData.json -a sites.csv
 
 The UserDataModel.json file is an example user file which you can use to fill out your own information.
 
