@@ -11,3 +11,9 @@ The flags for using Sonny are displayed bellow:
 Here is an example use of Sonny:
 
   Python3 main.py -r myData.json -a sites.csv
+
+The UserDataModel.json file is an example user file which you can use to fill out your own information.
+
+If there are any workday jobs which you apply for that can't be processed by Sonny please contact me so I can make updates to improve the functionality.
+
+Please also feel free to make your own improvements to Sonny as well.
