@@ -20,4 +20,6 @@ If there are any workday jobs which you apply for that can't be processed by Son
 
 Please also feel free to make your own improvements to Sonny as well.
 
+I am currently working on a companion web app for Sonny which will build the JSON file for you!
+
 Disclamer - Sonny stores and uses a lot of personal data in the .json file. DO NOT share this file with anyone for your own safety. Sonny strictly interacts with Workday and does use your information unless it is for a job application. 
