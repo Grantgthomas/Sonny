@@ -1,0 +1,52 @@
+{
+"user":{
+    "usrEmail" :"email@gmail.com",
+    "usrPass" : "Passsssssss123!",
+    "usrAddress" : "132 North Mulberry St.",
+    "usrCity" : "Portland",
+    "usrPostal" : "98059",
+    "usrPhone" : "7378084776",
+    "usrFname" : "G",
+    "usrLname" : "T",
+    "usrState" : "Washington",
+    "usrCounty" : "Seattle"
+    },
+    "jobs":
+        [
+            {
+                "ID":1,
+                "jobDescription" : "A fun fast paced environment where I performed software development and devOps duties",
+                "currentJob" : true,
+                "dateStarted" :"042005",
+                "dateEnded" : "042005",
+                "jobTitle" : "Consultant",
+                "jobCompany" :"Workday",
+                "jobCountry" : "United States"
+            },
+            {
+                "ID":2,
+                "jobDescription" : "A fun fast paced environment where I performed software development and devOps duties",
+                "currentJob" : false,
+                "dateStarted" :"042005",
+                "dateEnded" : "042005",
+                "jobTitle" : "Consultant",
+                "jobCompany" :"Workday",
+                "jobCountry" : "United States"
+            }
+        ],
+    "questionAnswers":
+    [
+        {
+        "ID" : 1,
+        "non_binary" : false,
+        "question" : [""],
+        "answer" : "y"
+        },
+        {
+        "ID" : 2,
+        "non_binary" : false,
+        "question" : [""],
+        "answer" : "y"
+        }
+    ]
+}
