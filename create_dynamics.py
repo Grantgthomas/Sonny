@@ -13,8 +13,8 @@ def createWorkExp(driver,workExpData):
     fromDate = workExpData.fromDate
     toDate = workExpData.toDate
     usrJobTitle = workExpData.jobTitle
-    usrCompany = workExpData.company
-    usrLocation = workExpData.location
+    usrCompany = workExpData.jobCompany
+    usrLocation = workExpData.jobCountry
     currentJob = workExpData.currentJob
     usrDescription = workExpData.jobDescription
     #find the button for work exp

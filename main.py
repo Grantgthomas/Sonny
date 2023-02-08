@@ -7,6 +7,7 @@ import random
 from iden import * 
 from create_dynamics import *
 from interpret_questions import *
+from import_data import *
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
@@ -45,7 +46,7 @@ def submitButton(driver):
 def random_word(length):
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
 
-def workdayAuth(driver):
+def workdayAuth(driver,user):
     #random_words = RandomWords()
     usrEmail = 'a@gmail.com'
     #for testing only
@@ -132,15 +133,15 @@ def clickRadio(driver,opt):
         RadioOpt =driver.find_element(By.XPATH,"//*[@id="+opt+"]")
         RadioOpt.send_keys(Keys.SPACE)
 
-def fillMyInfo(driver):
-    usrAddress = "132 North Mulberry St."
-    usrCity = "Portland"
-    usrPostal = "98059"
-    usrPhone = "7378084776"
-    usrFname = "G"
-    usrLname = "T"
-    usrState = "Washington"
-    usrCounty = "Seattle"
+def fillMyInfo(driver,user):
+    usrAddress = user.usrAddress
+    usrCity = user.usrCity 
+    usrPostal = user.usrPostal 
+    usrPhone = user.usrPhone 
+    usrFname = user.usrFname 
+    usrLname = user.usrLname 
+    usrState = user.usrState 
+    usrCounty = user.usrCounty 
     try:
         searchBox = WebDriverWait(driver,10).until(
             EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='sourceDropdown']"))
@@ -205,13 +206,12 @@ def fillMyInfo(driver):
         submitButton(driver)
         print('myinfo filled')
 
-def fillMyExperience(driver):
-    resumeName = "Grant_Resume.pdf"
+def fillMyExperience(driver,jobs,user):
     try:
         WebDriverWait(driver,10).until(
             EC.presence_of_element_located((By.XPATH, "//*[@aria-label='Add Work Experience']"))
         )
-        addExperience(driver,True)
+        addExperience(driver,jobs,user.usrResume)
     finally:
         submitButton(driver)
 
@@ -238,7 +238,7 @@ class workExpData:
         self.jobDescription = jobDescription
         self.currentJob = currentJob
 
-def appQuestions(driver):
+def appQuestions(driver,questAns):
     time.sleep(1.5)
     questionElements = idenAppQuestions(driver)
     #button_ids = [button.get_attribute("id") for button in questionElements]
@@ -262,6 +262,8 @@ def appQuestions(driver):
 
         #answerDropdown(element,True)
         driver.execute_script("arguments[0].scrollIntoView();", element)
+    
+    
     submitButton(driver)
     
 
@@ -269,14 +271,15 @@ def appQuestions(driver):
         
   
 
-def addExperience(driver,currentJob):
+def addExperience(driver,jobs,resumePath):
     actions = ActionChains(driver)
     usrDescription = "A fun fast paced environment where I performed software development and devOps duties"
     w1 = workExpData("042005","042005","Consultant","Workday","United States",usrDescription,True)
     w2 = workExpData("042005","042005","Consultant2","Workday2","United States",usrDescription,False)
 
     #workExpData = ["042005","042005","Consultant","Workday","United States",usrDescription,True]
-    workExperiences = [w1,w2,w2]
+    workExperiences = jobs
+    #workExperiences = [w1,w2,w2]
     for w in workExperiences:
         createWorkExp(driver,w)
     #Create a function to fill out education
@@ -287,7 +290,7 @@ def addExperience(driver,currentJob):
 
     #Create a function to upload resume
     file_input = idenAutoID(driver,"file-upload-input-ref")
-    file = os.getcwd()+"\\functionalsample.pdf"
+    file = os.getcwd()+"\\{}".format(resumePath)
     file_input.send_keys(file)
     #create a function to add websites
 
@@ -323,7 +326,7 @@ def fillDateRange(driver):
     fromDateBox.send_keys(Keys.TAB)
     fromDateBox.send_keys("42007")
 
-def fillEEO(driver):
+def fillEEO(driver,questAns):
     checkBoxes = idenCheckBoxes
     answerCheckbox(checkBoxes)
     submitButton(driver)
@@ -334,7 +337,7 @@ def engineInit(site):
     options = Options()
     options.add_argument('--disable-blink-features=AutomationControlled')
     driver = webdriver.Firefox(service=service,options=options)
-    driver.get(site)
+    driver.get(site[0])
     return driver
 
 
@@ -345,31 +348,39 @@ def importSites(args):
     sites = readFile(siteFile)
     return sites
 
-def main():
-    #define arguments to run
+def checkManualButton(driver):
+    applyManually = idenAutoID(driver,"applyManually")
+    if applyManually != None:
+        applyManually.click()
+    else:
+        print("Button not there")
+
+def parseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a',type=str,required=True,help='provides input for addresses')
+    parser.add_argument('-u',type=str,required=False,help='provide a json file for user data input')
     args = parser.parse_args()
+    
+    return importSites(args)
 
-    sites = importSites(args)
-
+def main():
+    #define arguments to run
+    #run parser
+    sites = parseInput()
+    #import user data
+    user,jobs,questAns= importUsrInfo("usrDataModel.json")
     for site in sites:
         driver = engineInit(site)
         #get directory of file for site names
-        workdayAuth(driver,importSites())
+        workdayAuth(driver,user)
         #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
         time.sleep(3.2)
         checkStillExists(driver)
-        applyManually = idenAutoID(driver,"applyManually")
-        if applyManually != None:
-            applyManually.click()
-        else:
-            print("Button not there")
-        fillMyInfo(driver)
-        fillMyExperience(driver)
-        appQuestions(driver)
-        appQuestions(driver)
-        fillEEO(driver)
+        fillMyInfo(driver,user)
+        fillMyExperience(driver,jobs,user)
+        appQuestions(driver,questAns)
+        appQuestions(driver,questAns)
+        fillEEO(driver,questAns)
 
     
 

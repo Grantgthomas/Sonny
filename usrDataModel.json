@@ -26,7 +26,7 @@
             {
                 "ID":2,
                 "jobDescription" : "A fun fast paced environment where I performed software development and devOps duties",
-                "currentJob" : true,
+                "currentJob" : false,
                 "dateStarted" :"042005",
                 "dateEnded" : "042005",
                 "jobTitle" : "Consultant",
@@ -37,13 +37,13 @@
     "questionAnswers":
     [
         {
-        "id" : 1,
+        "ID" : 1,
         "non_binary" : false,
         "question" : [""],
         "answer" : "y"
         },
         {
-        "id" : 2,
+        "ID" : 2,
         "non_binary" : false,
         "question" : [""],
         "answer" : "y"

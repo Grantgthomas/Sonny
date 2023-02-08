@@ -83,51 +83,6 @@ def answerDropdown(element,answer):
 
 #maybe use this class to store answers later instead of map
 
-class workExp:
-    jobDescription = "A fun fast paced environment where I performed software development and devOps duties"
-    currentJob = True
-    dateStarted ="042005"
-    dateEnded = "042005"
-    jobTitle = "Consultant"
-    jobCompany ="Workday"
-    jobCountry = "United States"
-
-
-    def __init__(self,currentJob):
-        self.currentJob = currentJob
-
-class usrData:
-    #data for application
-    usrEmail = "email@gmail.com"
-    usrPass = 'Passsssssss123!'
-    usrAddress = "132 North Mulberry St."
-    usrCity = "Portland"
-    usrPostal = "98059"
-    usrPhone = "7378084776"
-    usrFname = "G"
-    usrLname = "T"
-    usrState = "Washington"
-    usrCounty = "Seattle"
-    usrJobs = []
-
-    def __init__(self,usrEmail):
-        self.usrEmail = usrEmail
-    
-
-
-class question_answer:
-    id = 0
-    non_binary = False
-    question = [""]
-    answer = "y"
-    #initiate values for the question and answer to be supplied if the question matcher
-    def __init__(self,question,answer,non_binary,id):
-        self.non_binary = non_binary
-        self.question = question
-        self.answer = answer
-        self.id = id
-    
-
 
     #return true if a question posed in an aria string matches question of the class
     def idenQuestion(self,aria_string):
