@@ -18,6 +18,7 @@ drugTestQ = ["submit","drug","test"]
 relationshipQ = ["in","relationship","employed"]
 sexOrientationQ = ["sexual","orientation"]
 
+
 possible_questions = {
                         "ageQ": ageQ,
                         "previousInterviewQ": previousInterviewQ,
@@ -61,7 +62,8 @@ def answerCheckbox(boxOptions):
         answerBox.click()
     except:
         print("unable to click checkbox")
-    
+
+#clean the word from the question
 
 
 
@@ -85,16 +87,6 @@ def answerDropdown(element,answer):
 
 
     #return true if a question posed in an aria string matches question of the class
-    def idenQuestion(self,aria_string):
-        words_list = aria_string.split()
-        word_index = 0
-        for word in words_list:
-            if word.lower() == self.question[word_index]:
-                word_index += 1
-                if word_index == len(self.question):
-                    return True
-        return False   
-
     def getAnswer(self):
         return self.answer
     

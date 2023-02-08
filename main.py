@@ -36,6 +36,7 @@ def submitButton(driver):
     try:
         wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@data-automation-id='bottom-navigation-next-button']"))).click()
         print("click")
+        time.sleep(1.5)
     except:
         pass
 
@@ -239,7 +240,7 @@ class workExpData:
         self.currentJob = currentJob
 
 def appQuestions(driver,questAns):
-    time.sleep(1.5)
+    
     questionElements = idenAppQuestions(driver)
     #button_ids = [button.get_attribute("id") for button in questionElements]
     #button_arias = [button.get_attribute("aria-label") for button in questionElements]
@@ -251,20 +252,17 @@ def appQuestions(driver,questAns):
         element_aria = element.get_attribute("aria-label")
         element_question = checkQuestions(element_aria)
         try:
-            if answers[element_question]=="n":
-                answerDropdown(element,"n")
-            elif answers[element_question]=="y":
-                answerDropdown(element,"y")
+            answerDropdown(element,question_answers[element_question])
         except:
             #answer is not within question dict so guess
             answerDropdown(element,"b")
-            answerDropdown(element,"y")
+            #answerDropdown(element,"y")
 
         #answerDropdown(element,True)
         driver.execute_script("arguments[0].scrollIntoView();", element)
     
     
-    submitButton(driver)
+    #submitButton(driver)
     
 
     
@@ -327,10 +325,13 @@ def fillDateRange(driver):
     fromDateBox.send_keys("42007")
 
 def fillEEO(driver,questAns):
-    checkBoxes = idenCheckBoxes
+    checkBoxes = idenCheckBoxes(driver)
     answerCheckbox(checkBoxes)
-    submitButton(driver)
+    #submitButton(driver)
 
+def acceptAgreement(driver):
+    agrementBox = idenAutoID(driver,"agreementCheckbox")
+    agrementBox.click()
 
 def engineInit(site):
     service = FirefoxService(executable_path=GeckoDriverManager().install())
@@ -355,6 +356,9 @@ def checkManualButton(driver):
     else:
         print("Button not there")
 
+def fillVoluntary(driver):
+    acceptAgreement(driver)
+
 def parseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a',type=str,required=True,help='provides input for addresses')
@@ -363,6 +367,7 @@ def parseInput():
     
     return importSites(args)
 
+
 def main():
     #define arguments to run
     #run parser
@@ -370,18 +375,35 @@ def main():
     #import user data
     user,jobs,questAns= importUsrInfo("usrDataModel.json")
     for site in sites:
-        driver = engineInit(site)
-        #get directory of file for site names
-        workdayAuth(driver,user)
-        #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
-        time.sleep(3.2)
-        checkStillExists(driver)
-        fillMyInfo(driver,user)
-        fillMyExperience(driver,jobs,user)
-        appQuestions(driver,questAns)
-        appQuestions(driver,questAns)
-        fillEEO(driver,questAns)
-
+        #try 3 times 
+        for x in range(3):
+            driver = engineInit(site)
+            try:
+                
+                #get directory of file for site names
+                workdayAuth(driver,user)
+                #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
+                #time.sleep(3.2)
+                checkStillExists(driver)
+                fillMyInfo(driver,user)
+                fillMyExperience(driver,jobs,user)
+                #time.sleep(1.5)
+                appQuestions(driver,questAns)
+                submitButton(driver)
+                #time.sleep(1.5)
+                appQuestions(driver,questAns)
+                fillEEO(driver,questAns)
+                submitButton(driver)
+                
+                appQuestions(driver,questAns)
+                fillVoluntary(driver)
+                submitButton(driver)
+                submitButton(driver)
+                break
+            except:
+                driver.quit()
+                pass
+        
     
 
 
