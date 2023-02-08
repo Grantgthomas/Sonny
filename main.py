@@ -51,11 +51,12 @@ def workdayAuth(driver,user):
     #random_words = RandomWords()
     usrEmail = 'a@gmail.com'
     #for testing only
-    
-    emailSeed = random_word(10)
-    usrEmail = emailSeed + usrEmail
+    usrEmail = user.usrEmail
+    emailSeed = random_word(16)
+    #usrEmail = emailSeed + usrEmail
     usrPass = 'Passsssssss123!'
- 
+    user = user.usrPass
+    authInfo = "Username: {} Password: {}".format(usrEmail,usrPass)
         #frame = driver.find_element(By.ID,value='__gwt_historyFrame')
         #driver.switch_to.frame(frame)
     try:
@@ -103,6 +104,7 @@ def workdayAuth(driver,user):
             print('Account Creation Fail')
     finally:
            print('AccountCreated')
+           return authInfo
 
 
 
@@ -376,12 +378,13 @@ def main():
     user,jobs,questAns= importUsrInfo("usrDataModel.json")
     for site in sites:
         #try 3 times 
+        successful = True
         for x in range(3):
             driver = engineInit(site)
             try:
                 
                 #get directory of file for site names
-                workdayAuth(driver,user)
+                authInfo =workdayAuth(driver,user)
                 #driver.get('https://pscu.wd5.myworkdayjobs.com/en-US/PSCUCareers/login?redirect=%2Fen-US%2FPSCUCareers%2Fjob%2FRemote-USA%2FSr-IT-Security-Compliance-Analyst---Remote_5194%2Fapply%2FapplyManually%3Fjbsrc%3D1018%26source%3DLinkedin')
                 #time.sleep(3.2)
                 checkStillExists(driver)
@@ -401,8 +404,15 @@ def main():
                 submitButton(driver)
                 break
             except:
+                successful =False
                 driver.quit()
                 pass
+    
+        if successful:
+            print("Application Submitted for job: {}".format(site))
+            print("Access your application with the following info: {}".format(authInfo))
+        else:
+            print("Failed to submit application for: {}".format(site))
         
     
 
