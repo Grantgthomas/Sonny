@@ -1,6 +1,6 @@
 {
 "user":{
-    "usrEmail" :"email@gmail.com",
+    "usrEmail" :"asdyuiatdiuySSADadWQSA@gmail.com",
     "usrPass" : "Passsssssss123!",
     "usrAddress" : "132 North Mulberry St.",
     "usrCity" : "Portland",
@@ -37,16 +37,95 @@
     "questionAnswers":
     [
         {
-        "ID" : 1,
+        "ID" : "1",
+        "name"  : "ageQ",
         "non_binary" : false,
-        "question" : [""],
+        "question" : ["you","18"],
         "answer" : "y"
         },
         {
-        "ID" : 2,
+        "ID" : "2",
+        "name"  : "previousInterviewQ",
         "non_binary" : false,
-        "question" : [""],
+        "question" : ["interviewed","for","position"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "3",
+        "name"  : "workedContractQ",
+        "non_binary" : false,
+        "question" : ["worked","as","contractor"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "4",
+        "name"  : "legalAuthQ",
+        "non_binary" : false,
+        "question" : ["authorized","united","states"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "5",
+        "name"  : "reqVisaQ",
+        "non_binary" : false,
+        "question" : ["require","sponsorship","visa"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "6",
+        "name"  : "performDutiesQ",
+        "non_binary" : false,
+        "question" : ["perform","essential","duties"],
         "answer" : "y"
+        },
+        {
+        "ID" : "7",
+        "name"  : "previousEmployeeQ",
+        "non_binary" : false,
+        "question" : ["worked","for"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "8",
+        "name"  : "felonyQ",
+        "non_binary" : false,
+        "question" : ["convicted","of","felony"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "9",
+        "name"  : "spanishFluentQ",
+        "non_binary" : false,
+        "question" : ["fluent","in","spanish"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "10",
+        "name"  : "backgroundCheckQ",
+        "non_binary" : false,
+        "question" : ["submit","background","check"],
+        "answer" : "y"
+        },
+        {
+        "ID" : "11",
+        "name"  : "drugTestQ",
+        "non_binary" : false,
+        "question" : ["submit","drug","test"],
+        "answer" : "y"
+        },
+        {
+        "ID" : "12",
+        "name"  : "relationshipQ",
+        "non_binary" : false,
+        "question" : ["in","relationship","employed"],
+        "answer" : "n"
+        },
+        {
+        "ID" : "13",
+        "name"  : "sexOrientationQ",
+        "non_binary" : true,
+        "question" : ["sexual","orientation"],
+        "answer" : "i"
         }
     ]
 }
