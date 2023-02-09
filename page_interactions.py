@@ -1,3 +1,24 @@
+from selenium import webdriver
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+
+import argparse
+import csv
+import string
+import os
+import time
+import random
+
+from iden import * 
+from interpret_questions import *
+from create_dynamics import *
+
 def readFile(file):
     rows =[]
     with open(file,newline='') as addrs:
