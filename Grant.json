@@ -1,13 +1,13 @@
 {
 "user":{
-    "usrEmail" :"email@gmail.com",
-    "usrPass" : "Passsssssss123!",
-    "usrAddress" : "132 North Mulberry St.",
+    "usrEmail" :"intellitxt_reichart@simplelogin.com",
+    "usrPass" : "SuperComplex!23",
+    "usrAddress" : "4848 Lemmon Ave",
     "usrCity" : "Portland",
     "usrPostal" : "98059",
-    "usrPhone" : "7378084776",
-    "usrFname" : "G",
-    "usrLname" : "T",
+    "usrPhone" : "4258905509",
+    "usrFname" : "Grant",
+    "usrLname" : "Thomas",
     "usrState" : "Washington",
     "usrCounty" : "Seattle"
     },

@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "main.py",
-            "args":["-a","testList.csv"],
+            "args":["-a","testList.csv","-r","usrDataModel.json"],
             "console": "integratedTerminal",
             "justMyCode": true
         }
