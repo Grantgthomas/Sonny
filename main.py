@@ -5,13 +5,13 @@ from create_dynamics import *
 from interpret_questions import *
 from import_data import *
 from page_interactions import *
+from engine import *
 
 
 
 
 #def readFile(dir):
     
-
 
 def main():
     #define arguments to run
@@ -46,7 +46,6 @@ def main():
                 appQuestions(driver,questAns)
                 fillEEO(driver,questAns)
                 submitButton(driver)
-                
                 appQuestions(driver,questAns)
                 fillVoluntary(driver)
                 submitButton(driver)
@@ -63,7 +62,13 @@ def main():
         else:
             print("Failed to submit application for: {}".format(site))
         
+def parseInput():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a',type=str,required=True,help='provides input for addresses')
+    parser.add_argument('-r',type=str,required=False,help='provide a json file for user data input')
+    args = parser.parse_args()
     
+    return importSites(args)
 
 
 if __name__ == "__main__":

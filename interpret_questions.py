@@ -101,13 +101,6 @@ def answerDropdown(element,answer):
     element.send_keys(answer)
     time.sleep(.5)
     element.send_keys(answer)
-    #element.send_keys(Keys.ENTER)
-    #element.send_keys(answer)
-    #element.send_keys(Keys.ENTER)
-    
-    #element.click()
-
-#maybe use this class to store answers later instead of map
 
 
     #return true if a question posed in an aria string matches question of the class

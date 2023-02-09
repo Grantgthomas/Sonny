@@ -1,6 +1,7 @@
 import json
 from types import SimpleNamespace
 from collections import namedtuple
+import csv
 
 class WorkExp:
     jobDescription = "A fun fast paced environment where I performed software development and devOps duties"
@@ -27,10 +28,21 @@ class WorkExp:
             return classInstance(objData["ID"],objData["jobDescription"],objData["currentJob"],objData["dateEnded"],objData["dateStarted"],objData["jobTitle"],objData["jobCompany"],objData["jobCountry"])
 
 
+def importSites(args):
+    siteFile = args.a
+    sites = []
+    sites = readFile(siteFile)
+    return sites
 
 
 
-
+def readFile(file):
+    rows =[]
+    with open(file,newline='') as addrs:
+        addReader = csv.reader(addrs, delimiter=' ')
+        for row in addReader:
+            rows.append(row)
+    return rows
 
 
 
@@ -90,23 +102,9 @@ class Question_Answer:
 
 
 def importUsrInfo(filePath):
-    
-    #usrDataFile = open(filePath)
-    #UsrData = json.loads(usrDataFile.read())
-    #user = decodeUsr(UsrData)
     with open(filePath,"r") as file:
         usrData = json.load(file)
-    #print(user)
-    #UsrData = json.loads("./usrDataModel.json",object_hook=lambda d: SimpleNamespace(**d))
-    #user = json.loads(UsrData.user)
-    #jobs = json.loads(UsrData.jobs)
-    #questionAnswers = json.loads(UsrData.questionAnswers)
-    #user = usrData["user"]
-    #jobs = usrData["jobs"]
-    #questionAnswers = usrData["questionAnswers"]
     newUser = User.json_init(usrData["user"])
-    #jobs = Question_Answer.json_init(filePath)
-    #questionAnswers = Question_Answer.json_init(filePath)
     jobsJson=[usrData["jobs"]]
     questionAnswersJson=[usrData["questionAnswers"]]
     questionAnswerArr=[Question_Answer.json_init(x) for x in questionAnswersJson[0]]
@@ -128,4 +126,6 @@ def decodeQuestAns(UsrData):
     questionArr = json.loads("./usrDataModel.json",object_hook=lambda d: SimpleNamespace(**d))
     questionAnswers = json.loads(questionArr,object_hook=lambda d: SimpleNamespace(**d))
     return jobs
+
+
 
