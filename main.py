@@ -6,6 +6,7 @@ import time
 import random
 from iden import * 
 from create_dynamics import *
+#from interpret_questions import possible_questions,question_answers
 from interpret_questions import *
 from import_data import *
 from selenium import webdriver
@@ -229,7 +230,9 @@ def setUsrState(driver,ElementID,newAria):
     element.send_keys(Keys.ENTER)
 
 
-
+def useImports(import_questions,imported_answers):
+    possible_questions = import_questions
+    question_answers = imported_answers
 
 class workExpData:
     def __init__(self,fromDate,toDate,jobTitle,company,location,jobDescription,currentJob):
@@ -364,7 +367,7 @@ def fillVoluntary(driver):
 def parseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a',type=str,required=True,help='provides input for addresses')
-    parser.add_argument('-u',type=str,required=False,help='provide a json file for user data input')
+    parser.add_argument('-r',type=str,required=False,help='provide a json file for user data input')
     args = parser.parse_args()
     
     return importSites(args)
@@ -374,8 +377,14 @@ def main():
     #define arguments to run
     #run parser
     sites = parseInput()
+    
+    global possible_questions
+    global question_answers
     #import user data
     user,jobs,questAns= importUsrInfo("usrDataModel.json")
+    import_questions,imported_answers = getImports(questAns)
+    possible_questions = import_questions
+    question_answers = imported_answers
     for site in sites:
         #try 3 times 
         successful = True

@@ -47,18 +47,25 @@ class User:
     usrState = "Washington"
     usrCounty = "Seattle"
     usrResume = "functionalsample.pdf"
-    ID = "0"
-    usrJobs = []
+    
 
-    def __init__(self,ID):
-        self.ID = ID
+
+    def __init__(self,usrEmail,usrPass,usrAddress,usrCity,usrPostal,usrPhone,usrFname,usrLname,usrState,usrCounty):
+        self.usrEmail = usrEmail
+        self.usrPass = usrPass
+        self.usrAddress = usrAddress
+        self.usrCity = usrCity
+        self.usrPostal = usrPostal
+        self.usrPhone = usrPhone
+        self.usrFname = usrFname
+        self.usrLname = usrLname
+        self.usrState = usrState
+        self.usrCounty = usrCounty
 
     @classmethod
-    def json_init(classInstance,filePath):
-            with open(filePath,"r") as file:
-                classJson = json.load(file)
-            
-            return classInstance(classJson["user"])
+    def json_init(classInstance,objData):
+           
+            return classInstance(objData["usrEmail"],objData["usrPass"],objData["usrAddress"],objData["usrCity"],objData["usrPostal"],objData["usrPhone"],objData["usrFname"],objData["usrLname"],objData["usrState"],objData["usrCounty"])
 
 
 
@@ -67,16 +74,18 @@ class Question_Answer:
     non_binary = False
     question = [""]
     answer = "y"
+    name = "Q"
     #initiate values for the question and answer to be supplied if the question matcher
-    def __init__(self,ID,non_binary,question,answer):
+    def __init__(self,ID,non_binary,question,answer,name):
         self.ID = ID
         self.non_binary = non_binary
         self.question = question
         self.answer = answer
+        self.name = name
 
     @classmethod
     def json_init(classInstance,objData):
-            return classInstance(objData["ID"],objData["non_binary"],objData["question"],objData["answer"])
+            return classInstance(objData["ID"],objData["non_binary"],objData["question"],objData["answer"],objData["name"])
 
 
 
@@ -95,7 +104,7 @@ def importUsrInfo(filePath):
     #user = usrData["user"]
     #jobs = usrData["jobs"]
     #questionAnswers = usrData["questionAnswers"]
-    newUser = User.json_init(filePath)
+    newUser = User.json_init(usrData["user"])
     #jobs = Question_Answer.json_init(filePath)
     #questionAnswers = Question_Answer.json_init(filePath)
     jobsJson=[usrData["jobs"]]
@@ -106,10 +115,6 @@ def importUsrInfo(filePath):
 
     return newUser,jobArr,questionAnswerArr
 
-
-    
-    
-    return newUser,jobs,questionAnswers
 
 def decodeUsr(UsrData):
     return namedtuple('user',UsrData.keys())(*UsrData.values())

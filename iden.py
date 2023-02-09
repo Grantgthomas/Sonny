@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import string
 
 
 def idenAppQuestions(driver):
@@ -32,20 +31,5 @@ def idenID(driver,ID):
         print("Element not found ID"+ID)
         pass
 
-def idenQuestion(aria_string,possible_question):
-    words_list = aria_string.split()
-    word_index = 0
-    for word in words_list:
-        if cleanWord(word.lower()) == possible_question[word_index]:
-            word_index += 1
-            if word_index == len(possible_question):
-                return True
-    return False
 
-def cleanWord(word):
-    punctuation = string.punctuation
-    
-    # Removing the punctuation characters from the input string
-    cleaned = "".join(char for char in word if char not in punctuation)
-    
-    return cleaned
+
