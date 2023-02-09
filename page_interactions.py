@@ -15,9 +15,6 @@ def submitButton(driver):
     except:
         pass
 
-    #submitButton = driver.find_element(By.XPATH, "//*[@data-automation-id='bottom-navigation-next-button']")
-    #submitButton.click
-    #submitButton.click
 
 def random_word(length):
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
