@@ -1,10 +1,8 @@
 from selenium.webdriver.common.keys import Keys
 import time
 import string
-
-
 #
-possible_questions = {
+#possible_questions = {
                         #"ageQ": ["you","18"],
                         #"previousInterviewQ": ["interviewed","for","position"],
                         #"workedContractQ":["worked","as","contractor"],
@@ -18,10 +16,10 @@ possible_questions = {
                         #"drugTestQ":["submit","drug","test"],
                         #"relationshipQ":["in","relationship","employed"],
                         #"sexOrientationQ":["sexual","orientation"]
-                      }
+#                      }
 
 #name and answer field
-question_answers = {
+#question_answers = {
                         #"ageQ": "y",
                         #"previousInterviewQ": "n",
                         #"workedContractQ":"n",
@@ -35,7 +33,7 @@ question_answers = {
                         #"drugTestQ":"y",
                         #"relationshipQ":"n",
                         #"sexOrientationQ":"i"
-                    }
+#                    }
 
 #contains name and question field
 #this will need to become a dictionary of array and string (key)
@@ -49,13 +47,23 @@ imported_answers = {
     "_demo":"_n"
 }
 
+global possible_questions
+global question_answers
+
 def getImports(questions):
+    global imported_questions
+    global imported_answers
     for q in questions:
             imported_questions.update({q.name:q.question})
             imported_answers.update({q.name:q.answer})
     
     return imported_questions,imported_answers
 
+def setQuestions(questions,answers):
+    global possible_questions
+    global possible_answers
+    possible_questions = questions
+    possible_answers = answers
 
 
 def checkQuestions(aria_string):
@@ -95,7 +103,7 @@ def getQuestions():
     return possible_questions
 
 def getAnswers():
-    return question_answers
+    return possible_answers
 
 def answerDropdown(element,answer):
     element.send_keys(answer)

@@ -117,15 +117,7 @@ def importUsrInfo(filePath):
 def decodeUsr(UsrData):
     return namedtuple('user',UsrData.keys())(*UsrData.values())
 
-def decodeUsrJobs(UsrData):
-    jobsArr = json.loads("./usrDataModel.json",object_hook=lambda d: SimpleNamespace(**d))
-    jobs = json.loads(jobsArr,object_hook=lambda d: SimpleNamespace(**d))
-    return jobs
 
-def decodeQuestAns(UsrData):
-    questionArr = json.loads("./usrDataModel.json",object_hook=lambda d: SimpleNamespace(**d))
-    questionAnswers = json.loads(questionArr,object_hook=lambda d: SimpleNamespace(**d))
-    return jobs
 
 
 

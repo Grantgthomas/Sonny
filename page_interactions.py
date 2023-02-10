@@ -13,7 +13,7 @@ import time
 import random
 
 from iden import * 
-from interpret_questions import *
+from interpret_questions import getAnswers,checkQuestions,answerDropdown,answerCheckbox
 from create_dynamics import *
 
 
@@ -53,6 +53,7 @@ def workdayAuth(driver,user):
                 EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='createAccountCheckbox']"))
                 )
                 createAccountCheckbox.click()
+                time.sleep(2)
             except:
                 print("No Create Checkbox")
             try:
@@ -61,15 +62,43 @@ def workdayAuth(driver,user):
                 )
                 submitButton.click()
                 submitButton.click()
+                if autoIDDetected("errorMessage"):
+                    try:
+                        time.sleep(2)
+                        existingAcc(driver,user)
+                    except:
+                        print("Account login failed you may have an account on this workday site already")
+                        print("Please change the email in your user data file")
             except:
                 pass
     except:
             print('Account Creation Fail')
     finally:
-           print('AccountCreated')
+           print('Authentication Successful')
            return authInfo
 
 
+def existingAcc(driver,user):
+    signIn = idenAutoID(driver,"signInLink")
+    signIn.click()
+    emailForm = idenAutoID(driver,"email")
+    passwordForm = idenAutoID(driver,"password")
+    emailForm.send_keys(user.usrEmail)
+    passwordForm.send_keys(user.usrPass)
+    time.sleep(2)
+    authenticateButton = idenAutoID(driver,"click_filter")
+    WebDriverWait(driver, 3).until(
+                EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='click_filter']"))
+    )
+    authenticateButton.click()
+
+
+
+def autoIDDetected(autoID):
+   if EC.presence_of_element_located((By.XPATH,"//*[@data-automation-id='{}']".format(autoID))):
+       return True
+   else:
+       return False
 
 def selectListItem(list,item,page,driver):
     listItemSet = False
@@ -142,13 +171,20 @@ def fillMyInfo(driver,user):
         phoneType = driver.find_element(By.XPATH, "//*[@data-automation-id='phone-device-type']")
         phoneNumber = driver.find_element(By.XPATH, "//*[@data-automation-id='phone-number']")
         county = driver.find_element(By.XPATH, "//*[@data-automation-id='addressSection_regionSubdivision1']")
-        addressLine.send_keys(usrAddress)
-        cityLine.send_keys(usrCity)
-        postalLine.send_keys(usrPostal)
-        phoneNumber.send_keys(usrPhone)
-        fnameLine.send_keys(usrFname)
-        lnameLine.send_keys(usrLname)
-        county.send_keys(usrCounty)
+        if nullValue(addressLine):
+            addressLine.send_keys(usrAddress)
+        if nullValue(cityLine):
+            cityLine.send_keys(usrCity)
+        if nullValue(postalLine):
+            postalLine.send_keys(usrPostal)
+        if nullValue(phoneNumber):
+            phoneNumber.send_keys(usrPhone)
+        if nullValue(fnameLine):
+            fnameLine.send_keys(usrFname)
+        if nullValue(lnameLine):
+            lnameLine.send_keys(usrLname)
+        if nullValue(county):
+            county.send_keys(usrCounty)
         setUsrState(driver,"addressSection_countryRegion",usrState)      
         phoneType.send_keys('m')
         phoneType.send_keys(Keys.ENTER)
@@ -164,6 +200,14 @@ def fillMyInfo(driver,user):
     finally:
         submitButton(driver)
         print('myinfo filled')
+
+def nullValue(element):
+    value =element.get_attribute("value")
+    if value == '':
+        return True
+    else:
+        return False
+    pass
 
 def fillMyExperience(driver,jobs,user):
     try:
@@ -206,7 +250,7 @@ def appQuestions(driver,questAns):
         element_aria = element.get_attribute("aria-label")
         element_question = checkQuestions(element_aria)
         try:
-            answerDropdown(element,question_answers[element_question])
+            answerDropdown(element,answers[element_question])
         except:
             answerDropdown(element,"b")
 

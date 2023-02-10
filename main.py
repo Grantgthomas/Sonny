@@ -2,7 +2,7 @@
 from iden import * 
 from create_dynamics import *
 #from interpret_questions import possible_questions,question_answers
-from interpret_questions import *
+from interpret_questions import setQuestions,getImports
 from import_data import *
 from page_interactions import *
 from engine import *
@@ -18,13 +18,13 @@ def main():
     #run parser
     sites = parseInput()
     
-    global possible_questions
-    global question_answers
+
     #import user data
     user,jobs,questAns= importUsrInfo("usrDataModel.json")
     import_questions,imported_answers = getImports(questAns)
-    possible_questions = import_questions
-    question_answers = imported_answers
+    #possible_questions = import_questions
+    #question_answers = imported_answers
+    setQuestions(import_questions,imported_answers)
     for site in sites:
         #try 3 times 
         successful = True
@@ -39,16 +39,18 @@ def main():
                 checkStillExists(driver)
                 fillMyInfo(driver,user)
                 fillMyExperience(driver,jobs,user)
-                #time.sleep(1.5)
+                time.sleep(1.5)
                 appQuestions(driver,questAns)
                 submitButton(driver)
-                #time.sleep(1.5)
+                time.sleep(2.5)
                 appQuestions(driver,questAns)
                 fillEEO(driver,questAns)
                 submitButton(driver)
+                time.sleep(1.5)
                 appQuestions(driver,questAns)
                 fillVoluntary(driver)
                 submitButton(driver)
+                time.sleep(1.5)
                 submitButton(driver)
                 break
             except:
@@ -66,6 +68,7 @@ def parseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a',type=str,required=True,help='provides input for addresses')
     parser.add_argument('-r',type=str,required=False,help='provide a json file for user data input')
+    #parser.add_argument('-t',type=str,required=False,help='activate test functionality')
     args = parser.parse_args()
     
     return importSites(args)
