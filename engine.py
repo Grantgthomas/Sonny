@@ -9,4 +9,5 @@ def engineInit(site):
     options.add_argument('--disable-blink-features=AutomationControlled')
     driver = webdriver.Firefox(service=service,options=options)
     driver.get(site[0])
+
     return driver
